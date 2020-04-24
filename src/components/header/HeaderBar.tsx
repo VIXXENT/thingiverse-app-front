@@ -6,6 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button'
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme:Theme)=>
     createStyles({
@@ -18,7 +19,17 @@ const useStyles = makeStyles((theme:Theme)=>
         },
         title: {
             flexGrow: 1
+        },
+        link: {
+            color: 'white',
+            textDecoration: 'none',
+            '&:hover': {
+                textDecoration: 'underline',
+                textDecorationColor: '#243282'
+            }
         }
+        
+        
     })
 );
 
@@ -40,7 +51,9 @@ export default function(){
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" className={classes.title}>
-                        Thingiverse App
+                        <Link to="/list" className={classes.link}>
+                            Thingiverse App
+                        </Link>
                     </Typography>
                     <Button color="inherit">
                         Connect

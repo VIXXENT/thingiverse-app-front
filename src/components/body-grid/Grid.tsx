@@ -2,6 +2,10 @@ import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Grid } from '@material-ui/core';
 import GridElement from './GridElement';
+import { Query, QueryResult } from 'react-apollo';
+import { gql } from 'apollo-boost';
+import { Thing } from '../../services/apollo/types';
+import GridThingElement from './GridThingElement';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -16,19 +20,50 @@ export default function () {
 
     const classes: any = useStyles();
 
-    const elements = [
-        <GridElement name="A" />,
-        <GridElement name="B" />,
-        <GridElement name="C" />,
-        <GridElement name="D" />,
-        <GridElement namEe="E"  />
-    ]
-
     return (
         <div className={classes.root}>
-            <Grid container spacing={3}>
-                {elements}
-            </Grid>
+            <ThingsQuery {...classes} />
         </div>
+    );
+}
+
+const ThingsQuery = (classes:any) => {
+    return (
+        <Query
+            query={
+                gql`{
+                    things{
+                        id
+                        name
+                        thumbnail
+                        public_url
+                        creator{
+                            name
+                            public_url
+                        }
+                    }
+                }`
+            }
+        >
+            {({ loading, error, data }: QueryResult<any, Record<string, any>>): JSX.Element => {
+                if (loading) {
+                    return <p>Loading...</p>
+                } else if (error || !data) {
+                    return <p>{JSON.stringify(error)}</p>
+                }
+                else if (data) {
+                    return (
+                        <div className={classes.root}>
+                            <Grid container spacing={3}>
+                                {data.things.map((thing: Thing) => (<GridThingElement key={thing.id} {...thing}/>))}
+                            </Grid>
+                        </div>
+                    );
+                }
+                else {
+                    return <p>?</p>;
+                }
+            }}
+        </Query>
     );
 }
