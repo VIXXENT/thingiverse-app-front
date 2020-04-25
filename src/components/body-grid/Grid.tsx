@@ -1,7 +1,6 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Grid } from '@material-ui/core';
-import GridElement from './GridElement';
 import { Query, QueryResult } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import { Thing } from '../../services/apollo/types';
@@ -32,7 +31,7 @@ const ThingsQuery = (classes:any) => {
         <Query
             query={
                 gql`{
-                    things{
+                    things(sort:"popular"){
                         id
                         name
                         thumbnail
