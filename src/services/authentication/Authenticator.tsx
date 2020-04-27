@@ -1,41 +1,49 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import * as H from 'history';
+const URL_AUTH_CODE = 'http://localhost:8080/thingiverse/authCode';
+const URL_VAL_TOKEN = 'http://localhost:8080/thingiverse/validate-token';
 
-interface authenticatorProps{
+interface authenticatorProps extends RouteComponentProps{
     code?: string | null,
     userId?: number,
     setUserId: Dispatch<SetStateAction<number|undefined>>
 }
 
-export default function (props: authenticatorProps): JSX.Element {
+export default withRouter(function (props: authenticatorProps): JSX.Element {
     useEffect(() => {
         async function fetchAuthInfo() {
-            await getAuthInfo(props.setUserId, props.code);
+            await getAuthInfo(props);
         }
         fetchAuthInfo()
-    }, [props.code, props.setUserId])
+    }, [props])
 
-    let con;
-    if (props.userId) {
-        con = `connected: ${props.userId}`
-    } else {
-        con = `NOT CONNECTED`
+    return <div>{props?.userId&& `Connected: ${props.userId}`}</div>
+});
+
+async function getAuthInfo(props: authenticatorProps){
+    await getCurrentUserId(props.setUserId);
+
+    if(!props.userId && props.code){
+        await authenticate(props);
+        await getCurrentUserId(props.setUserId);
     }
-
-    return <div>{con}</div>
+    return props.userId;
 }
 
-function getAuthInfo(setUserId: Function, code?: string | null): Promise<Number> {
-    console.log(`in getAuthInfo - called with code: ${code}`);
-    if(code){
-        return fetch(`http://localhost:8080/thingiverse/authCode?code=${code}`)
-        .then((res) => fetch(`http://localhost:8080/thingiverse/validate-token`))
-        .then((res: Response) => res.json())
-        .then((json: { user_id: Number }) => {
-            console.log(`in THEN - calling setAuthInfo with ${JSON.stringify(json)}`);
-            return setUserId(json.user_id)
-        });
-    }else{
-        return new Promise(()=>null);
-    }
+async function authenticate(props: authenticatorProps){
+    await fetch(`${URL_AUTH_CODE}?code=${props.code}`);
+    removeUrlQueryString(props.history);
+}
 
+function removeUrlQueryString(history:H.History<H.LocationState>){
+    history.push(history.location.pathname);
+}
+
+async function getCurrentUserId(setUserId: Dispatch<SetStateAction<number|undefined>>){
+    const res = await fetch(URL_VAL_TOKEN);
+    const json = await res.json();
+    if(json?.user_id){
+        setUserId(json.user_id);
+    }
 }

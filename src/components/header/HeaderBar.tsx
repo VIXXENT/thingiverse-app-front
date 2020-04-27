@@ -69,14 +69,17 @@ export default withRouter(function (props: headerProps){
                     <Typography variant='caption'>
                         <Authenticator code={code} userId={props.userId} setUserId={props.setUserId}/>
                     </Typography>
-                    <Button color="inherit">
-                        <a 
-                            href={`${authUrl}?client_id=${clientId}&redirect_uri=${redirectCodeUrl}&response_type=code`}
-                            className={classes.link}
-                        >
-                            Connect
-                        </a>
-                    </Button>
+                    {!props.userId &&
+                        <Button color="inherit">
+                            <a 
+                                href={`${authUrl}?client_id=${clientId}&redirect_uri=${redirectCodeUrl}&response_type=code`}
+                                className={classes.link}
+                            >
+                                Connect
+                            </a>
+                        </Button>
+                    }
+
                 </Toolbar>
             </AppBar>
         </div>
