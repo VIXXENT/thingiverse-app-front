@@ -22,7 +22,7 @@ interface gridProps{
 
 export default function (props:gridProps) {
     const classes: any = useStyles();
-    {console.log("GRID - Props: ", props)}
+    console.log("GRID - Props: ", props);
     useEffect(() => {
         function logChange(){console.log("GRID - Change in userId!", props.userId)};
         logChange();

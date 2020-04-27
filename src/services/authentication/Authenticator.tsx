@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useEffect, Dispatch, SetStateAction } from 'react';
 
 interface authenticatorProps{
     code?: string | null,
@@ -12,7 +12,7 @@ export default function (props: authenticatorProps): JSX.Element {
             await getAuthInfo(props.setUserId, props.code);
         }
         fetchAuthInfo()
-    }, [props.code])
+    }, [props.code, props.setUserId])
 
     let con;
     if (props.userId) {
