@@ -1,15 +1,29 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { makeStyles, Theme, createStyles, Typography as pre, Paper, Typography } from '@material-ui/core';
+import { makeStyles, Theme, createStyles, Typography as pre, Paper, Typography, Grid } from '@material-ui/core';
 import { gql } from 'apollo-boost';
 import { ThingDetail, Image } from '../../services/apollo/types';
 import { useParams } from 'react-router-dom';
 import { Query, QueryResult } from 'react-apollo';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import EyeIcon from '@material-ui/icons/Visibility';
+import RemixIcon from '@material-ui/icons/Autorenew';
+import EditIcon from '@material-ui/icons/Edit';
+import LayoutIcon from '@material-ui/icons/ViewCompact';
+import FileIcon from '@material-ui/icons/InsertDriveFileOutlined';
+import DownloadIcon from '@material-ui/icons/GetApp';
+import CommentIcon from '@material-ui/icons/ChatBubbleOutlineOutlined';
+import CollectIcon from '@material-ui/icons/LibraryAddOutlined';
+
+
 import ImageGallery from 'react-image-gallery';
 import "react-image-gallery/styles/css/image-gallery.css";
+import Parser from 'html-react-parser';
 import _ from 'lodash';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
+
+
+const useStyles = makeStyles((theme: Theme) =>{
+    return createStyles({
         root: {
             margin: theme.spacing(2),
             marginLeft: theme.spacing(10)
@@ -18,18 +32,37 @@ const useStyles = makeStyles((theme: Theme) =>
             margin: theme.spacing(1),
             padding: theme.spacing(1)
         },
+        thingName:{
+            width: theme.spacing(160)
+        },
         galleryWrapper: {
-            width: theme.spacing(100),
-            height: theme.spacing(100),
+            width: theme.spacing(80),
+            height: theme.spacing(75),
             overflow: 'hidden'
+        },
+        descriptionWrapper: {
+            maxWidth: theme.spacing(80),
+            height: theme.spacing(75),
+            overflow: 'auto'
+        },
+        counter: {
+            width: theme.spacing(20),
+            height: theme.spacing(10),
+            display: 'flex',
+        },
+        counterContent:{
+            margin: 'auto'
         },
         '@global': {
             '.image-gallery-slide img': {
                 width: '100%',
-                height: '1000px',
+                height: theme.spacing(60),
                 objectFit: 'cover',
                 overflow: 'hidden',
                 objectPosition: 'center center',
+            },
+            '.image-gallery-content .image-gallery-slide .image-gallery-image': {
+                maxHeight: "100%"
             },
             '.image-gallery':{
                 width: '100%',
@@ -41,7 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
             }
         }
     })
-);
+});
 
 interface thingDetailProps{
     userId?: number,
@@ -65,17 +98,94 @@ export default function(props:thingDetailProps){
                         return (
                             <div>
                                 <Paper className={classes.paper}>
-                                    <Typography variant='h5'>
-                                        {thing.name} by {thing.creator.name}
-                                    </Typography>
-                                    <Paper className={`${classes.paper} ${classes.galleryWrapper}`}>
-                                        <ImageGallery 
-                                            items={convertImagesToGalleryFormat(thing.images)} 
-                                            lazyLoad={true}
-                                            slideDuration={100}
-                                            
-                                        />
-                                    </Paper>
+                                    <Grid container spacing={1} alignItems="center" justify="center">
+                                        <Grid item>
+                                            <Typography variant='h5' className={classes.thingName}>
+                                                {thing.name} by {thing.creator.name}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid container spacing={1} alignItems="center" justify="center">
+                                            <Grid item>
+                                                <Paper className={`${classes.paper} ${classes.galleryWrapper}`}>
+                                                    <ImageGallery 
+                                                        items={convertImagesToGalleryFormat(thing.images)} 
+                                                        lazyLoad={true}
+                                                        slideDuration={100}
+                                                    />
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={`${classes.paper} ${classes.descriptionWrapper}`}>
+                                                    {Parser(thing.details)}
+                                                </Paper>
+                                            </Grid>
+                                        </Grid>
+                                        <Grid container spacing={1} alignItems="center" justify="center">
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <FavoriteIcon /> {thing.like_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <CollectIcon /> {thing.collect_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <CommentIcon /> {thing.comment_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <DownloadIcon /> {thing.download_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <FileIcon /> {thing.file_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <LayoutIcon /> {thing.layout_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <EditIcon /> {thing.make_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <RemixIcon /> {thing.remix_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                            <Grid item>
+                                                <Paper className={classes.counter} >
+                                                    <Typography variant="caption" className={classes.counterContent}>
+                                                        <EyeIcon /> {thing.view_count}
+                                                    </Typography>
+                                                </Paper>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
                                     <Paper className={classes.paper}>
                                         <a href={thing.public_url}>See it in Thingiverse!</a>
                                     </Paper>
