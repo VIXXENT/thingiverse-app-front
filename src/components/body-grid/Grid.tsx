@@ -1,4 +1,4 @@
-import React, { SetStateAction, Dispatch, useEffect } from 'react';
+import React, { SetStateAction, Dispatch } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Grid } from '@material-ui/core';
 import { Query, QueryResult } from 'react-apollo';
@@ -22,15 +22,8 @@ interface gridProps{
 
 export default function (props:gridProps) {
     const classes: any = useStyles();
-    console.log("GRID - Props: ", props);
-    useEffect(() => {
-        function logChange(){console.log("GRID - Change in userId!", props.userId)};
-        logChange();
-      }, [props.userId]);
-    
     return (
         <div className={classes.root}>
-            {console.log("GERID - BEFORE QUERY - userId: ", props.userId)}
             {props.userId?(<ThingsQuery {...classes} />):('NOT CONNECTED')}
         </div>
     );

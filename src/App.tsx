@@ -17,13 +17,11 @@ function App() {
         <div className='main'>
           <div className='header'>
             <HeaderBar userId={userId} setUserId={setUserId}/>
-            {console.log("userId", userId)}
           </div>
             <div className='side-menu'>
               <SideMenu/>
           </div>
             <Switch>
-              {console.log("APP - userId: ", userId)}
               <Route path='/list'
                 render={(props)=>
                 <Grid
