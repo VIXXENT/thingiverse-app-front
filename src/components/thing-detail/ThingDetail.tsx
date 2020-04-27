@@ -5,7 +5,6 @@ import { ThingDetail, Image } from '../../services/apollo/types';
 import { useParams } from 'react-router-dom';
 import { Query, QueryResult } from 'react-apollo';
 import ImageGallery from 'react-image-gallery';
-import "react-image-gallery/styles/css/image-gallery.css";
 import "./imageGalleryStyle.css";
 import _ from 'lodash';
 
