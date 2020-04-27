@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { makeStyles, Theme, createStyles, Typography as pre, Paper, Typography } from '@material-ui/core';
 import { gql } from 'apollo-boost';
-import { ThingDetail } from '../../services/apollo/types';
+import { ThingDetail, Image } from '../../services/apollo/types';
 import { useParams } from 'react-router-dom';
 import { Query, QueryResult } from 'react-apollo';
 import ImageGallery from 'react-image-gallery';
 import "react-image-gallery/styles/css/image-gallery.css";
+import _ from 'lodash';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -16,11 +17,38 @@ const useStyles = makeStyles((theme: Theme) =>
         paper: {
             margin: theme.spacing(1),
             padding: theme.spacing(1)
+        },
+        galleryWrapper: {
+            width: theme.spacing(100),
+            height: theme.spacing(100),
+            overflow: 'hidden'
+        },
+        '@global': {
+            '.image-gallery-slide img': {
+                width: '100%',
+                height: '1000px',
+                objectFit: 'cover',
+                overflow: 'hidden',
+                objectPosition: 'center center',
+            },
+            '.image-gallery':{
+                width: '100%',
+                height: 'auto',
+            },
+            
+            '.fullscreen .image-gallery-slide img':{
+                maxHeight: '100vh',
+            }
         }
     })
 );
 
-export default function(){
+interface thingDetailProps{
+    userId?: number,
+    setUserId: Dispatch<SetStateAction<number|undefined>>
+}
+
+export default function(props:thingDetailProps){
     const classes: any = useStyles();
     const params:any = useParams();
     return( 
@@ -36,32 +64,28 @@ export default function(){
                         const thing:ThingDetail = data.thingDetail;
                         return (
                             <div>
-                            <Paper className={classes.paper}>
-                                <Typography variant='h5'>
-                                    {thing.name} by {thing.creator.name}
-                                </Typography>
-                                <img src={thing.default_image.url}/>
-                                <a href={thing.public_url}>See it in Thingiverse!</a>
-                            </Paper>
-                            <ImageGallery items={[
-  {
-    original: 'https://picsum.photos/id/1018/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1018/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1015/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1015/250/150/',
-  },
-  {
-    original: 'https://picsum.photos/id/1019/1000/600/',
-    thumbnail: 'https://picsum.photos/id/1019/250/150/',
-  },
-]} />
-                            <Paper className={classes.paper}>
-                                <pre>
-                                    {JSON.stringify(data, null, '\t')}
-                                </pre>
-                            </Paper>
+                                <Paper className={classes.paper}>
+                                    <Typography variant='h5'>
+                                        {thing.name} by {thing.creator.name}
+                                    </Typography>
+                                    <Paper className={`${classes.paper} ${classes.galleryWrapper}`}>
+                                        <ImageGallery 
+                                            items={convertImagesToGalleryFormat(thing.images)} 
+                                            lazyLoad={true}
+                                            slideDuration={100}
+                                            
+                                        />
+                                    </Paper>
+                                    <Paper className={classes.paper}>
+                                        <a href={thing.public_url}>See it in Thingiverse!</a>
+                                    </Paper>
+                                </Paper>
+                                
+                                <Paper className={classes.paper}>
+                                    <pre>
+                                        {JSON.stringify(data, null, '\t')}
+                                    </pre>
+                                </Paper>
                             </div>
                         );
                     }
@@ -72,6 +96,16 @@ export default function(){
             </Query>
         </div>
     );
+}
+
+function convertImagesToGalleryFormat(images:[Image]){
+    let galleryImages = images.map((image:Image)=>{
+        const thumbnailImage = _.find(image.sizes, {"type": "thumb","size": "large",});
+        const displayImage = _.find(image.sizes, {"type": "display","size": "large",});
+        return {original:displayImage?.url, thumbnail:thumbnailImage?.url};
+    });
+
+    return galleryImages;
 }
 
 function createThingsDetailQuery(thingId:string){
@@ -101,6 +135,17 @@ function createThingsDetailQuery(thingId:string){
             comment_count
             is_watched
             default_image{
+                id
+                url
+                name
+                sizes{
+                    type
+                    size
+                    url
+                }
+                added
+            }
+            images{
                 id
                 url
                 name

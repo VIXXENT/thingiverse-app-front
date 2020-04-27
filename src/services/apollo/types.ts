@@ -79,6 +79,7 @@ export interface ThingDetail{
     remix_count: Number
     make_count: Number
     app_count: Number
+    images: [Image]
 }
 
 export interface Image {
