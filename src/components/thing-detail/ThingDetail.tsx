@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { makeStyles, Theme, createStyles, Typography as pre, Paper, Typography, Grid } from '@material-ui/core';
 import { gql } from 'apollo-boost';
-import { ThingDetail, Image } from '../../services/apollo/types';
+import { Thing, Image } from '../../services/apollo/types';
 import { useParams } from 'react-router-dom';
 import { Query, QueryResult } from 'react-apollo';
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -82,6 +82,10 @@ interface thingDetailProps{
 }
 
 export default function(props:thingDetailProps){
+    if(!props.userId){
+        return(<div>NOT CONNECTED</div>);
+    }
+    
     const classes: any = useStyles();
     const params:any = useParams();
     return( 
@@ -94,7 +98,7 @@ export default function(props:thingDetailProps){
                         return <p>{JSON.stringify(error)}</p>
                     }
                     else if (data) {
-                        const thing:ThingDetail = data.thingDetail;
+                        const thing:Thing = data.thing;
                         return (
                             <div>
                                 <Paper className={classes.paper}>
@@ -219,7 +223,7 @@ function convertImagesToGalleryFormat(images:[Image]){
 }
 
 function createThingsDetailQuery(thingId:string){
-    return gql`{thingDetail(id:${thingId}){
+    return gql`{thing(id:${thingId}){
         id
             name
             thumbnail
