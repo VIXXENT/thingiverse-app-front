@@ -1,10 +1,8 @@
 import React, { SetStateAction, Dispatch } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import { Grid } from '@material-ui/core';
-import { Query, QueryResult } from 'react-apollo';
+import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
-import { Thing } from '../../services/apollo/types';
-import GridThingElement from './GridThingElement';
+import GridLoader from './GridLoader';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -15,57 +13,38 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-interface gridProps{
+export const THINGS_QUERY = gql`
+    query thingsCursoredList($cursor: CursorInput) {
+        thingsCursoredList(sort:"popular", cursor: $cursor){
+            cursor{
+                page
+                per_page
+            }
+            hasMore
+            things{
+                id
+                name
+                thumbnail
+                public_url
+                creator{
+                    name
+                    public_url
+                }
+            }
+        }
+    }
+`;
+
+interface gridProps {
     userId?: number,
-    setUserId: Dispatch<SetStateAction<number|undefined>>
+    setUserId: Dispatch<SetStateAction<number | undefined>>
 }
 
-export default function (props:gridProps) {
+export default function (props: gridProps) {
     const classes: any = useStyles();
     return (
-        <div className={classes.root}>
-            {props.userId?(<ThingsQuery {...classes} />):('NOT CONNECTED')}
+        <div className = {classes.root}>
+            <GridLoader query={THINGS_QUERY} firstQueryResult={useQuery(THINGS_QUERY)}/>
         </div>
-    );
-}
-
-const ThingsQuery = (classes:any) => {
-    return (
-        <Query
-            query={
-                gql`{
-                    things(sort:"popular"){
-                        id
-                        name
-                        thumbnail
-                        public_url
-                        creator{
-                            name
-                            public_url
-                        }
-                    }
-                }`
-            }
-        >
-            {({ loading, error, data }: QueryResult<any, Record<string, any>>): JSX.Element => {
-                if (loading) {
-                    return <p>Loading...</p>
-                } else if (error || !data) {
-                    return <p>{JSON.stringify(error)}</p>
-                }
-                else if (data) {
-                    return (
-                        <div className={classes.root}>
-                            <Grid container spacing={3}>
-                                {data.things.map((thing: Thing) => (<GridThingElement key={thing.id} {...thing}/>))}
-                            </Grid>
-                        </div>
-                    );
-                }
-                else {
-                    return <p>?</p>;
-                }
-            }}
-        </Query>
     );
 }

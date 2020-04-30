@@ -1,17 +1,68 @@
-import React from 'react';
+export interface Cursor{
+    page: number
+    per_page: number
+}
+
+export interface ThingsCursoredList{
+    cursor: Cursor
+    hasMore: boolean
+    things: Thing[]
+    __typename: string
+}
 
 export interface Thing {
-    id: string,
-    name: string,
-    url: string,
-    public_url: string,
-    created_at: string,
-    thumbnail: string,
-    preview_image: string,
-    creator: Creator,
-    is_private: boolean,
-    is_purchased: boolean,
-    is_published: boolean
+    added: string
+    ancestors_url: string
+    app_count: number
+    app_id: string
+    categories_url: string
+    collect_count: number
+    comment_count: number
+    created_at: string
+    creator: Creator
+    default_image: Image
+    derivatives_url: string
+    description: string
+    description_html: string
+    details: string
+    details_parts: [DetailsPart]
+    download_count: number
+    edu_details:string
+    edu_details_parts:[EduDetailsPart]
+    education: Education
+    file_count: number
+    files_url: string
+    id: string
+    images: [Image]
+    images_url: string
+    in_library: boolean
+    instructions: string
+    instructions_html: string
+    is_collected: boolean
+    is_featured: string
+    is_liked: boolean
+    is_nsfw: boolean
+    is_private: number
+    is_published: number
+    is_purchased: number
+    is_watched: boolean
+    is_wip: number
+    layout_count: number
+    layouts_url: string
+    license: string
+    like_count: number
+    likes_url: string
+    make_count: number
+    modified: string
+    name: string
+    preview_image: string
+    print_history_count: number
+    public_url: string
+    remix_count: number
+    tags_url: string
+    thumbnail: string
+    url: string
+    view_count: number
 }
 
 export interface Creator{
@@ -26,60 +77,6 @@ export interface Creator{
     is_following: boolean,
     location: string,
     cover: string
-}
-
-
-export interface ThingDetail{
-    id: string
-    name: string
-    thumbnail: string
-    url: string
-    public_url: string
-    creator: Creator
-    added: string
-    modified: string
-    is_published: Number
-    is_wip: Number
-    is_featured: string
-    is_nsfw: Boolean
-    like_count: Number
-    is_liked: Boolean
-    collect_count: Number
-    is_collected: Boolean
-    comment_count: Number
-    is_watched: Boolean
-    default_image: Image
-    description: string
-    instructions: string
-    description_html: string
-    instructions_html: string
-    details: string
-    details_parts: [DetailsPart]
-    edu_details:string
-    edu_details_parts:[EduDetailsPart]
-    license: string
-    files_url: string
-    images_url: string
-    likes_url: string
-    ancestors_url: string
-    derivatives_url: string
-    tags_url: string
-    categories_url: string
-    file_count: Number
-    layout_count: Number
-    layouts_url: string
-    is_private: Number
-    is_purchased: Number
-    in_library: Boolean
-    print_history_count: Number
-    app_id: string
-    download_count: Number
-    view_count: Number
-    education: Education
-    remix_count: Number
-    make_count: Number
-    app_count: Number
-    images: [Image]
 }
 
 export interface Image {
@@ -112,7 +109,7 @@ export interface EduDetailsPart {
     name: string
     required: string
     label: string
-    save_as_component:Boolean
+    save_as_component:boolean
     template: string
     fieldname: string
     default: string
