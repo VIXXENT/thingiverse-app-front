@@ -1,6 +1,7 @@
 export interface Cursor{
     page: number
     per_page: number
+    sort: string
 }
 
 export interface ThingsCursoredList{

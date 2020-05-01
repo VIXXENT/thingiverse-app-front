@@ -20,6 +20,7 @@ import "react-image-gallery/styles/css/image-gallery.css";
 import Parser from 'html-react-parser';
 import _ from 'lodash';
 
+//FIXME: http://localhost:3000/detail/2064269 error - message: Expected Iterable, but did not find one for field "Education.grades".
 
 
 const useStyles = makeStyles((theme: Theme) =>{

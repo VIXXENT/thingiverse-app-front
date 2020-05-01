@@ -8,7 +8,7 @@ import useScrollPosition, {PositionChange} from '../util/useScrollPosition';
 
 export interface GridLoaderProps{
     query: DocumentNode,
-    firstQueryResult: QueryResult<thingsQueryData, Record<string, Thing>>,
+    firstQueryResult: QueryResult<thingsQueryData, Record<string, Cursor>>,
 }
 
 export interface thingsQueryData{
@@ -28,7 +28,7 @@ export default function(props:GridLoaderProps){
     console.log(`${timeString()} GRID_LOADER - START! - loaded[${props.firstQueryResult.data?.thingsCursoredList.things.length}] - `, props);
     const loadedData = props.firstQueryResult.data;
     const loadedThings:Thing[]|undefined = loadedData?.thingsCursoredList?.things;
-    const [cursor, setCursor] = useState<Cursor>({page:1, per_page:50});
+    const [cursor, setCursor] = useState<Cursor>({page:1, per_page:50, sort:'popular'});
 
     const scrollHandler = (positionChange: PositionChange) => {
         if(isBottom(positionChange)){
