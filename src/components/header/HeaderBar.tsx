@@ -13,7 +13,7 @@ const authUrl = "https://www.thingiverse.com/login/oauth/authorize";
 const redirectCodeUrl = "http://localhost:3000/list";
 const clientId = "b2de5a3ecb494ab9040b";
 
-const useStyles = makeStyles((theme:Theme)=>
+const useStyles = makeStyles((theme: Theme)=>
     createStyles({
         root: {
             flexGrow: 1
@@ -38,17 +38,15 @@ const useStyles = makeStyles((theme:Theme)=>
     })
 );
 
-interface headerProps extends RouteComponentProps{
-    userId?: number,
-    setUserId: Dispatch<SetStateAction<number|undefined>>
+interface HeaderProps extends RouteComponentProps{
+    userId?: number;
+    setUserId: Dispatch<SetStateAction<number|undefined>>;
 }
 
-export default withRouter(function (props: headerProps){
-
-    //is there a way to assign a correct type for 'classes'?
-    const classes:any = useStyles();
+export default withRouter(function (props: HeaderProps){
+    const classes = useStyles();
     const params = new URLSearchParams(props.location.search);
-    const code:string|null = params.get('code');
+    const code: string|null = params.get('code');
     return (
         <div className={classes.root}>
             <AppBar position='static'>

@@ -72,11 +72,11 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function () {
+export default function (): JSX.Element {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
 
-    const handleToggleMenu = () => {
+    const handleToggleMenu: () => void = () => {
         setOpen(!open);
     }
 

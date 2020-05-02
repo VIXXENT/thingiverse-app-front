@@ -9,7 +9,7 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import ThingDetail from './components/thing-detail/ThingDetail';
 
 
-function App() {
+function App(): JSX.Element {
   const [userId, setUserId] = useState<number>();
   return (
     <ApolloProvider client={client}>
@@ -23,7 +23,9 @@ function App() {
           </div>
             <Switch>
               <Route path='/list'
+                // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
                 render={(props)=>
+                userId &&
                 <Grid
                     {...props}
                     userId={userId}
@@ -32,6 +34,7 @@ function App() {
                 }
               />
               <Route path='/detail/:thingId'
+                // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
                 render={(props)=>
                   <ThingDetail
                     {...props}
