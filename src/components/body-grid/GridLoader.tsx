@@ -5,9 +5,11 @@ import { Grid } from '@material-ui/core';
 import { QueryResult } from 'react-apollo';
 import GridThingElement from './GridThingElement';
 import useScrollPosition, {PositionChange} from '../util/useScrollPosition';
+import { timeString } from '../util/utils';
 
 export interface GridLoaderProps{
     query: DocumentNode,
+    userId: number|undefined
     firstQueryResult: QueryResult<thingsQueryData, Record<string, Cursor>>,
 }
 
@@ -26,6 +28,11 @@ const isBottom = (positionChange: PositionChange):boolean=>{
 
 export default function(props:GridLoaderProps){
     console.log(`${timeString()} GRID_LOADER - START! - loaded[${props.firstQueryResult.data?.thingsCursoredList.things.length}] - `, props);
+
+    if(!props.userId){
+        return (<p>NO USER ID</p>);
+    }
+
     const loadedData = props.firstQueryResult.data;
     const loadedThings:Thing[]|undefined = loadedData?.thingsCursoredList?.things;
     const [cursor, setCursor] = useState<Cursor>({page:1, per_page:50, sort:'popular'});
@@ -50,7 +57,15 @@ export default function(props:GridLoaderProps){
 
     if(props.firstQueryResult.loading){
         jsxResult = <p>LOADING...</p>
-    } else if (!loadedData?.thingsCursoredList?.things){
+    }else if(props.firstQueryResult.error){
+        if(props.firstQueryResult.error.message.indexOf('No access_token')>=0){
+            jsxResult = <p>NO ACCESS TOKEN</p>
+        }else{
+            jsxResult = <pre>ERROR: {JSON.stringify(props.firstQueryResult.error, null, '  ')}</pre>
+        }
+    }
+    else if (!loadedData?.thingsCursoredList?.things){
+        console.log("GRID_LOADER - NO RESULTS - props: ", props);
         jsxResult = <p>NO RESULTS FOUND</p>
     }else{
         jsxResult = (
@@ -90,9 +105,4 @@ const loadMore = (fetchMore:Function, query:DocumentNode, cursor:Cursor) => {
             return result;
         }
     })
-}
-
-const timeString = ()=>{
-    const now = new Date();
-    return `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}.${now.getMilliseconds()}`
 }

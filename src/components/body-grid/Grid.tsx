@@ -1,10 +1,11 @@
-import React, { SetStateAction, Dispatch, useState, ChangeEvent } from 'react';
+import React, { SetStateAction, Dispatch, useState, ChangeEvent, useEffect } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useQuery, QueryHookOptions } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import GridLoader, { thingsQueryData } from './GridLoader';
 import { Cursor } from '../../services/apollo/types';
 import { Select, MenuItem } from '@material-ui/core';
+import { timeString } from '../util/utils';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -43,6 +44,7 @@ interface gridProps {
 }
 
 export default function (props: gridProps) {
+    console.log(`${timeString()} GRID - START! - props: `, props);
     const classes: any = useStyles();
     const sorts = ['relevant', 'text', 'popular', 'makes', 'newest'];
     const [sort, setSort] = useState('popular');
@@ -60,7 +62,7 @@ export default function (props: gridProps) {
             setSort(value);
         }
     }
-    
+
     return (
         <div className = {classes.root}>
             <Select
@@ -72,7 +74,11 @@ export default function (props: gridProps) {
             >
                 {sorts.map((sortValue)=><MenuItem key={sortValue} value={sortValue}>{sortValue}</MenuItem>)}
             </Select>
-            <GridLoader query={THINGS_QUERY} firstQueryResult={useQuery(THINGS_QUERY, queryOptions)}/>
+            <GridLoader
+                userId={props.userId}
+                query={THINGS_QUERY}
+                firstQueryResult={useQuery(THINGS_QUERY, queryOptions)}
+            />
         </div>
     );
 }

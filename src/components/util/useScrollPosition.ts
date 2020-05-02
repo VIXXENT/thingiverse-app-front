@@ -1,4 +1,5 @@
 import { useRef, MutableRefObject, useLayoutEffect } from 'react';
+import { timeString } from './utils';
 
 export interface GetScrollPositionArgument {
     element?: MutableRefObject<HTMLElement>,
@@ -38,7 +39,8 @@ export default function(
     useWindow:boolean,
     wait:number
 ) {
-    const position = useRef(getScrollPosition({ useWindow }))
+    console.log(`${timeString()} USE_SCROLL_POSITION - START! - element: `, element);
+    const position = useRef(getScrollPosition({ element, useWindow }))
     let throttleTimeout:NodeJS.Timeout|null = null
 
     const callBack = () => {

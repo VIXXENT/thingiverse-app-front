@@ -1,6 +1,7 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import * as H from 'history';
+import { timeString } from '../../components/util/utils';
 const URL_AUTH_CODE = 'http://localhost:8080/thingiverse/authCode';
 const URL_VAL_TOKEN = 'http://localhost:8080/thingiverse/validate-token';
 
@@ -11,17 +12,16 @@ interface authenticatorProps extends RouteComponentProps{
 }
 
 export default withRouter(function (props: authenticatorProps): JSX.Element {
-    useEffect(() => {
-        async function fetchAuthInfo() {
-            await getAuthInfo(props);
-        }
-        fetchAuthInfo()
-    }, [props])
+    async function fetchAuthInfo() {
+        await getAuthInfo(props);
+    }
+    fetchAuthInfo()
 
     return <div>{props?.userId&& `Connected: ${props.userId}`}</div>
 });
 
 async function getAuthInfo(props: authenticatorProps){
+    console.log(`${timeString()} AUTHENTICATOR - GET_AUTH_INFO - props: `, props);
     await getCurrentUserId(props.setUserId);
 
     if(!props.userId && props.code){
@@ -32,6 +32,7 @@ async function getAuthInfo(props: authenticatorProps){
 }
 
 async function authenticate(props: authenticatorProps){
+    console.log(`${timeString()} AUTHENTICATOR - AUTHENTICATE: ${URL_AUTH_CODE}?code=${props.code}`);
     await fetch(`${URL_AUTH_CODE}?code=${props.code}`);
     removeUrlQueryString(props.history);
 }
@@ -44,6 +45,7 @@ async function getCurrentUserId(setUserId: Dispatch<SetStateAction<number|undefi
     const res = await fetch(URL_VAL_TOKEN);
     const json = await res.json();
     if(json?.user_id){
+        console.log(`${timeString()} AUTHENTICATOR - SET_USER_ID - userId: `, json.user_id);
         setUserId(json.user_id);
     }
 }

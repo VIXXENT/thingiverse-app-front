@@ -19,6 +19,7 @@ import ImageGallery from 'react-image-gallery';
 import "react-image-gallery/styles/css/image-gallery.css";
 import Parser from 'html-react-parser';
 import _ from 'lodash';
+import { timeString } from '../util/utils';
 
 //FIXME: http://localhost:3000/detail/2064269 error - message: Expected Iterable, but did not find one for field "Education.grades".
 
@@ -83,6 +84,7 @@ interface thingDetailProps{
 }
 
 export default function(props:thingDetailProps){
+    console.log(`${timeString()} THING_DETAIL - START! - props: `, props);
     if(!props.userId){
         return(<div>NOT CONNECTED</div>);
     }

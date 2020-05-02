@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function (thing:Thing) {
-
     const classes: any = useStyles();
 
     return (
