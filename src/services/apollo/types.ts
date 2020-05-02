@@ -2,6 +2,7 @@ export interface Cursor{
     page: number;
     per_page: number;
     sort: string;
+    is_featured: boolean;
 }
 
 export interface ThingsCursoredList{

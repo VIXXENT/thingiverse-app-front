@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { makeStyles, Theme, createStyles, Typography as pre, Paper, Typography, Grid, Tooltip } from '@material-ui/core';
+import { makeStyles, Theme, createStyles, Paper, Typography, Grid, Tooltip } from '@material-ui/core';
 import { gql, DocumentNode } from 'apollo-boost';
-import { Thing, Image, File } from '../../services/apollo/types';
-import { useParams, Link } from 'react-router-dom';
+import { Thing, Image } from '../../services/apollo/types';
+import { useParams } from 'react-router-dom';
 import { Query, QueryResult } from 'react-apollo';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import EyeIcon from '@material-ui/icons/Visibility';
@@ -322,7 +322,7 @@ export default function(props: ThingDetailProps): JSX.Element{
                                                             <Tooltip key={file.id} title={`${file.name} - ${file.formatted_size}`} arrow>
                                                                 <Paper className={classes.fileCard}>
                                                                     <Typography className={classes.counterContent}>
-                                                                        <img src={file.thumbnail} className={classes.fileThumbnail}/>
+                                                                        <img src={file.thumbnail} className={classes.fileThumbnail} alt={`download file: ${file.name}`}/>
                                                                         <DownloadIcon className={classes.fileDownloadIcon}/>
                                                                     </Typography>
                                                                 </Paper>

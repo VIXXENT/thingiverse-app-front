@@ -65,7 +65,7 @@ export default function(props: GridLoaderProps): JSX.Element{
     const loadedData = props.firstQueryResult.data;
     const loadedThings: Thing[]|undefined = loadedData?.thingsCursoredList?.things;
     // eslint-disable-next-line @typescript-eslint/camelcase
-    const [cursor, setCursor] = useState<Cursor>({page:1, per_page:50, sort:'popular'});
+    const [cursor, setCursor] = useState<Cursor>({page:1, per_page:50, sort:'popular', is_featured:false});
 
     const scrollHandler: (positionChange: PositionChange) => void = (positionChange) => {
         if(isBottom(positionChange)){
