@@ -4,7 +4,7 @@ import { useQuery, QueryHookOptions } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import GridLoader, { ThingsQueryData } from './GridLoader';
 import { Cursor } from '../../services/apollo/types';
-import { Select, MenuItem } from '@material-ui/core';
+import { Select, MenuItem, Checkbox } from '@material-ui/core';
 import { timeString } from '../util/utils';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -48,20 +48,24 @@ export default function (props: GridProps): JSX.Element {
     const classes = useStyles();
     const sorts = ['relevant', 'text', 'popular', 'makes', 'newest'];
     const [sort, setSort] = useState('popular');
+    const [filterFeatured, setFilterFeatured] = useState(false);
 
     const queryOptions: QueryHookOptions<ThingsQueryData, Record<string, Cursor>> = {
         variables: {
             // eslint-disable-next-line @typescript-eslint/camelcase
-            cursor:{page: 1, per_page: 50, sort}
+            cursor:{page: 1, per_page: 50, sort, is_featured:filterFeatured}
         }
     };
     
     const selectSortHandler: (event: ChangeEvent<{ name?: string | undefined; value: unknown }>) => void = (event)=>{
-        console.log(`sort change: `, event);
         const value = event.target.value;
         if(typeof value === 'string'){
             setSort(value);
         }
+    }
+    
+    const checkBoxFeaturedHandler: (event: ChangeEvent<HTMLInputElement>, checked: boolean) => void = (_, checked)=>{
+        setFilterFeatured(checked);
     }
 
     return  (
@@ -75,6 +79,7 @@ export default function (props: GridProps): JSX.Element {
             >
                 {sorts.map((sortValue)=><MenuItem key={sortValue} value={sortValue}>{sortValue}</MenuItem>)}
             </Select>
+            <Checkbox name='Only featured' onChange={checkBoxFeaturedHandler}/>
             <GridLoader
                 userId={props.userId}
                 query={THINGS_QUERY}
