@@ -1,4 +1,4 @@
-import React, { SetStateAction, Dispatch, useState, ChangeEvent, useEffect } from 'react';
+import React, { SetStateAction, Dispatch, useState, ChangeEvent } from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useQuery, QueryHookOptions } from 'react-apollo';
 import { gql } from 'apollo-boost';
@@ -64,7 +64,7 @@ export default function (props: GridProps): JSX.Element {
         }
     }
 
-    return (
+    return  (
         <div className = {classes.root}>
             <Select
                 labelId="sort"

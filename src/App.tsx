@@ -25,6 +25,7 @@ function App(): JSX.Element {
               <Route path='/list'
                 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
                 render={(props)=>
+                userId &&
                 <Grid
                     {...props}
                     userId={userId}

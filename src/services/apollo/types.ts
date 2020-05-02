@@ -31,6 +31,7 @@ export interface Thing {
     edu_details: string;
     edu_details_parts: [EduDetailsPart];
     education: Education;
+    files: [File];
     file_count: number;
     files_url: string;
     id: string;
@@ -78,6 +79,21 @@ export interface Creator{
     is_following: boolean;
     location: string;
     cover: string;
+}
+
+export interface File{
+    id: string;
+    name: string;
+    size: number;
+    url: string;
+    public_url: string;
+    download_url: string;
+    threejs_url: string;
+    thumbnail: string;
+    default_image: string;
+    date: string;
+    formatted_size: string;
+    download_count: number;
 }
 
 export interface Image {

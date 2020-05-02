@@ -1,4 +1,4 @@
-import React, { useEffect, Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import * as H from 'history';
 import { timeString } from '../../components/util/utils';

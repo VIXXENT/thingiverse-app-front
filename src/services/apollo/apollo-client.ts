@@ -1,4 +1,4 @@
-import { gql, ApolloClient, HttpLink, ApolloQueryResult } from "apollo-boost";
+import { ApolloClient, HttpLink } from "apollo-boost";
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 
 const link = new HttpLink({
