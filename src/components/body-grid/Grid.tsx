@@ -2,7 +2,7 @@ import React, { SetStateAction, Dispatch, useState, ChangeEvent, useEffect } fro
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { useQuery, QueryHookOptions } from 'react-apollo';
 import { gql } from 'apollo-boost';
-import GridLoader, { thingsQueryData } from './GridLoader';
+import GridLoader, { ThingsQueryData } from './GridLoader';
 import { Cursor } from '../../services/apollo/types';
 import { Select, MenuItem } from '@material-ui/core';
 import { timeString } from '../util/utils';
@@ -38,24 +38,25 @@ export const THINGS_QUERY = gql`
     }
 `;
 
-interface gridProps {
-    userId?: number,
-    setUserId: Dispatch<SetStateAction<number | undefined>>
+interface GridProps {
+    userId?: number;
+    setUserId: Dispatch<SetStateAction<number | undefined>>;
 }
 
-export default function (props: gridProps) {
+export default function (props: GridProps): JSX.Element {
     console.log(`${timeString()} GRID - START! - props: `, props);
-    const classes: any = useStyles();
+    const classes = useStyles();
     const sorts = ['relevant', 'text', 'popular', 'makes', 'newest'];
     const [sort, setSort] = useState('popular');
 
-    const queryOptions:QueryHookOptions<thingsQueryData, Record<string, Cursor>> = {
+    const queryOptions: QueryHookOptions<ThingsQueryData, Record<string, Cursor>> = {
         variables: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
             cursor:{page: 1, per_page: 50, sort}
         }
     };
     
-    const selectSortHandler = (event:ChangeEvent<{ name?: string | undefined; value: any; }>)=>{
+    const selectSortHandler: (event: ChangeEvent<{ name?: string | undefined; value: unknown }>) => void = (event)=>{
         console.log(`sort change: `, event);
         const value = event.target.value;
         if(typeof value === 'string'){

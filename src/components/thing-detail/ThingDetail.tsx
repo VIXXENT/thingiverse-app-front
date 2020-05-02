@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react';
 import { makeStyles, Theme, createStyles, Typography as pre, Paper, Typography, Grid } from '@material-ui/core';
-import { gql } from 'apollo-boost';
+import { gql, DocumentNode } from 'apollo-boost';
 import { Thing, Image } from '../../services/apollo/types';
 import { useParams } from 'react-router-dom';
 import { Query, QueryResult } from 'react-apollo';
@@ -78,30 +78,140 @@ const useStyles = makeStyles((theme: Theme) =>{
     })
 });
 
-interface thingDetailProps{
-    userId?: number,
-    setUserId: Dispatch<SetStateAction<number|undefined>>
+interface ThingDetailProps{
+    userId?: number;
+    setUserId: Dispatch<SetStateAction<number|undefined>>;
 }
 
-export default function(props:thingDetailProps){
+function convertImagesToGalleryFormat(images: [Image]): { original: string | undefined; thumbnail: string | undefined}[] {
+    const galleryImages = images.map((image: Image)=>{
+        const thumbnailImage = _.find(image.sizes, {"type": "thumb","size": "large",});
+        const displayImage = _.find(image.sizes, {"type": "display","size": "large",});
+        return {original:displayImage?.url, thumbnail:thumbnailImage?.url};
+    });
+
+    return galleryImages;
+}
+
+function createThingsDetailQuery(thingId: string): DocumentNode{
+    return gql`{thing(id:${thingId}){
+        id
+            name
+            thumbnail
+            public_url
+            creator{
+                id
+                name
+                first_name
+                last_name
+                public_url
+                thumbnail
+            }
+            added
+            modified
+            is_published
+            is_wip
+            is_featured
+            is_nsfw
+            like_count
+            is_liked
+            collect_count
+            is_collected
+            comment_count
+            is_watched
+            default_image{
+                id
+                url
+                name
+                sizes{
+                    type
+                    size
+                    url
+                }
+                added
+            }
+            images{
+                id
+                url
+                name
+                sizes{
+                    type
+                    size
+                    url
+                }
+                added
+            }
+            description
+            instructions
+            description_html
+            instructions_html
+            details
+            details_parts{
+                type
+                name
+                required
+                data{
+                    content
+                }
+            }
+            edu_details
+            edu_details_parts{
+                type
+                name
+                required
+                label
+                save_as_component
+                template
+                fieldname
+                default
+            }
+            license
+            files_url
+            images_url
+            likes_url
+            ancestors_url
+            derivatives_url
+            tags_url
+            categories_url
+            file_count
+            layout_count
+            layouts_url
+            is_private
+            is_purchased
+            in_library
+            print_history_count
+            app_id
+            download_count
+            view_count
+            education{
+                grades
+                subjects
+            }
+            remix_count
+            make_count
+            app_count
+    }}`;
+}
+
+export default function(props: ThingDetailProps): JSX.Element{
     console.log(`${timeString()} THING_DETAIL - START! - props: `, props);
     if(!props.userId){
         return(<div>NOT CONNECTED</div>);
     }
     
-    const classes: any = useStyles();
-    const params:any = useParams();
+    const classes = useStyles();
+    const params = useParams<{thingId: string}>();
     return( 
         <div className={classes.root}>
             <Query query={createThingsDetailQuery(params.thingId)}>
-                {({ loading, error, data }: QueryResult<any, Record<string, any>>): JSX.Element => {
+                {({ loading, error, data }: QueryResult<{thing: Thing}, Record<string, {thing: Thing}>>): JSX.Element => {
                     if (loading) {
                         return <p>Loading...</p>
                     } else if (error || !data) {
                         return <p>{JSON.stringify(error)}</p>
                     }
                     else if (data) {
-                        const thing:Thing = data.thing;
+                        const thing: Thing = data.thing;
                         return (
                             <div>
                                 <Paper className={classes.paper}>
@@ -213,114 +323,4 @@ export default function(props:thingDetailProps){
             </Query>
         </div>
     );
-}
-
-function convertImagesToGalleryFormat(images:[Image]){
-    let galleryImages = images.map((image:Image)=>{
-        const thumbnailImage = _.find(image.sizes, {"type": "thumb","size": "large",});
-        const displayImage = _.find(image.sizes, {"type": "display","size": "large",});
-        return {original:displayImage?.url, thumbnail:thumbnailImage?.url};
-    });
-
-    return galleryImages;
-}
-
-function createThingsDetailQuery(thingId:string){
-    return gql`{thing(id:${thingId}){
-        id
-            name
-            thumbnail
-            public_url
-            creator{
-                id
-                name
-                first_name
-                last_name
-                public_url
-                thumbnail
-            }
-            added
-            modified
-            is_published
-            is_wip
-            is_featured
-            is_nsfw
-            like_count
-            is_liked
-            collect_count
-            is_collected
-            comment_count
-            is_watched
-            default_image{
-                id
-                url
-                name
-                sizes{
-                    type
-                    size
-                    url
-                }
-                added
-            }
-            images{
-                id
-                url
-                name
-                sizes{
-                    type
-                    size
-                    url
-                }
-                added
-            }
-            description
-            instructions
-            description_html
-            instructions_html
-            details
-            details_parts{
-                type
-                name
-                required
-                data{
-                    content
-                }
-            }
-            edu_details
-            edu_details_parts{
-                type
-                name
-                required
-                label
-                save_as_component
-                template
-                fieldname
-                default
-            }
-            license
-            files_url
-            images_url
-            likes_url
-            ancestors_url
-            derivatives_url
-            tags_url
-            categories_url
-            file_count
-            layout_count
-            layouts_url
-            is_private
-            is_purchased
-            in_library
-            print_history_count
-            app_id
-            download_count
-            view_count
-            education{
-                grades
-                subjects
-            }
-            remix_count
-            make_count
-            app_count
-    }}`;
 }

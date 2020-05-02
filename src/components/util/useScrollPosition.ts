@@ -2,27 +2,27 @@ import { useRef, MutableRefObject, useLayoutEffect } from 'react';
 import { timeString } from './utils';
 
 export interface GetScrollPositionArgument {
-    element?: MutableRefObject<HTMLElement>,
-    useWindow: boolean 
+    element?: MutableRefObject<HTMLElement>;
+    useWindow: boolean; 
 }
 
 export interface XYPosition{
-    x: number
+    x: number;
     y: number;
-    totalSize:{
-        x:number,
-        y:number
-    }
+    totalSize: {
+        x: number;
+        y: number;
+    };
 }
 
 export interface PositionChange{
-    previousPosition: XYPosition
-    currentPosition: XYPosition
+    previousPosition: XYPosition;
+    currentPosition: XYPosition;
 }
 
 const isBrowser = typeof window !== `undefined`
 
-function getScrollPosition({ element, useWindow }: GetScrollPositionArgument):XYPosition {
+function getScrollPosition({ element, useWindow }: GetScrollPositionArgument): XYPosition {
     if (!isBrowser) return { x: 0, y: 0, totalSize:{ x: 0, y: 0 } }
     const target = element ? element.current : document.body
     const position = target.getBoundingClientRect()
@@ -33,17 +33,17 @@ function getScrollPosition({ element, useWindow }: GetScrollPositionArgument):XY
 }
 
 export default function(
-    effect:(positionChange:PositionChange)=>any,
-    deps:any[],
+    effect: (positionChange: PositionChange) => unknown,
+    deps: [],
     element: MutableRefObject<HTMLElement>|undefined,
-    useWindow:boolean,
-    wait:number
-) {
+    useWindow: boolean,
+    wait: number
+): void {
     console.log(`${timeString()} USE_SCROLL_POSITION - START! - element: `, element);
     const position = useRef(getScrollPosition({ element, useWindow }))
-    let throttleTimeout:NodeJS.Timeout|null = null
+    let throttleTimeout: NodeJS.Timeout|null = null
 
-    const callBack = () => {
+    const callBack: () => void = () => {
         const currentPosition = getScrollPosition({ element, useWindow })
         effect({ previousPosition: position.current, currentPosition })
         position.current = currentPosition
@@ -51,9 +51,10 @@ export default function(
     }
 
     useLayoutEffect(() => {
-        const handleScroll = () => {
+        const handleScroll: () => void = () => {
             if (wait) {
                 if (throttleTimeout === null) {
+                    // eslint-disable-next-line react-hooks/exhaustive-deps
                     throttleTimeout = setTimeout(callBack, wait)
                 }
             } else {
@@ -62,7 +63,7 @@ export default function(
         }
 
         window.addEventListener('scroll', handleScroll)
-
-        return () => window.removeEventListener('scroll', handleScroll)
+        const removeScrollListener: () => void = () => window.removeEventListener('scroll', handleScroll);
+        return removeScrollListener;
     }, deps)
 }

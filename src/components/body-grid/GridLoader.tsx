@@ -8,16 +8,16 @@ import useScrollPosition, {PositionChange} from '../util/useScrollPosition';
 import { timeString } from '../util/utils';
 
 export interface GridLoaderProps{
-    query: DocumentNode,
-    userId: number|undefined
-    firstQueryResult: QueryResult<thingsQueryData, Record<string, Cursor>>,
+    query: DocumentNode;
+    userId: number|undefined;
+    firstQueryResult: QueryResult<ThingsQueryData, Record<string, Cursor>>;
 }
 
-export interface thingsQueryData{
-    thingsCursoredList: ThingsCursoredList
+export interface ThingsQueryData{
+    thingsCursoredList: ThingsCursoredList;
 }
 
-const isBottom = (positionChange: PositionChange):boolean=>{
+const isBottom = (positionChange: PositionChange): boolean=>{
     const currentWindowInnerHeight = window.innerHeight;
     const distanceScrolledDown = (-positionChange.currentPosition.y);
     const totalHeight = document.body.scrollHeight;
@@ -26,7 +26,36 @@ const isBottom = (positionChange: PositionChange):boolean=>{
     return isBottom;
 }
 
-export default function(props:GridLoaderProps){
+const nextPage: (cursor: Cursor, setCursor: React.Dispatch<React.SetStateAction<Cursor>>) => void = (cursor, setCursor)=>{
+    console.log(`${timeString()} GRID_LOADER - NEXT_PAGE - INCREMENT PAGE (${JSON.stringify(cursor)})`);
+    cursor.page++;
+    console.log(`${timeString()} GRID_LOADER - NEXT_PAGE - DONE (${JSON.stringify(cursor)})`);
+    setCursor(cursor);
+}
+
+const loadMore: (fetchMore: Function, query: DocumentNode, cursor: Cursor) => void = (fetchMore, query, cursor) => {
+    console.log(`${timeString()} GRID_LOADER - LOAD_MORE - START! `);
+    return fetchMore({
+        query,
+        variables: { cursor },
+        updateQuery: (previousResult: ThingsQueryData, { fetchMoreResult }: {fetchMoreResult: ThingsQueryData}) => {
+            console.log(`${timeString()} GRID_LOADER - LOAD_MORE - UPDATE_QUERY - START! `);
+            const existingResults = previousResult.thingsCursoredList;
+            const newResults = fetchMoreResult.thingsCursoredList;
+            const result: ThingsQueryData = {
+                thingsCursoredList : {
+                    hasMore: newResults.things.length>0,
+                    cursor: fetchMoreResult.thingsCursoredList.cursor,
+                    things: [...existingResults.things, ...newResults.things],
+                    __typename: existingResults.__typename
+                }
+            };
+            return result;
+        }
+    })
+}
+
+export default function(props: GridLoaderProps): JSX.Element{
     console.log(`${timeString()} GRID_LOADER - START! - loaded[${props.firstQueryResult.data?.thingsCursoredList.things.length}] - `, props);
 
     if(!props.userId){
@@ -34,10 +63,11 @@ export default function(props:GridLoaderProps){
     }
 
     const loadedData = props.firstQueryResult.data;
-    const loadedThings:Thing[]|undefined = loadedData?.thingsCursoredList?.things;
+    const loadedThings: Thing[]|undefined = loadedData?.thingsCursoredList?.things;
+    // eslint-disable-next-line @typescript-eslint/camelcase
     const [cursor, setCursor] = useState<Cursor>({page:1, per_page:50, sort:'popular'});
 
-    const scrollHandler = (positionChange: PositionChange) => {
+    const scrollHandler: (positionChange: PositionChange) => void = (positionChange) => {
         if(isBottom(positionChange)){
             console.log(`${timeString()} Bottom reached!`);
             nextPage(cursor, setCursor);
@@ -76,33 +106,4 @@ export default function(props:GridLoaderProps){
     }
     
     return jsxResult;
-}
-
-const nextPage = (cursor:Cursor, setCursor: React.Dispatch<React.SetStateAction<Cursor>>)=>{
-    console.log(`${timeString()} GRID_LOADER - NEXT_PAGE - INCREMENT PAGE (${JSON.stringify(cursor)})`);
-    cursor.page++;
-    console.log(`${timeString()} GRID_LOADER - NEXT_PAGE - DONE (${JSON.stringify(cursor)})`);
-    setCursor(cursor);
-}
-
-const loadMore = (fetchMore:Function, query:DocumentNode, cursor:Cursor) => {
-    console.log(`${timeString()} GRID_LOADER - LOAD_MORE - START! `);
-    return fetchMore({
-        query,
-        variables: { cursor },
-        updateQuery: (previousResult:thingsQueryData, { fetchMoreResult }:{fetchMoreResult:thingsQueryData}) => {
-            console.log(`${timeString()} GRID_LOADER - LOAD_MORE - UPDATE_QUERY - START! `);
-            const existingResults = previousResult.thingsCursoredList;
-            const newResults = fetchMoreResult.thingsCursoredList;
-            const result:thingsQueryData = {
-                thingsCursoredList : {
-                    hasMore: newResults.things.length>0,
-                    cursor: fetchMoreResult.thingsCursoredList.cursor,
-                    things: [...existingResults.things, ...newResults.things],
-                    __typename: existingResults.__typename
-                }
-            };
-            return result;
-        }
-    })
 }

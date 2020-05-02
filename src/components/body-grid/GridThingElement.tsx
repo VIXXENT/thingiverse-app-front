@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-export default function (thing:Thing) {
-    const classes: any = useStyles();
+export default function (thing: Thing): JSX.Element {
+    const classes = useStyles();
 
     return (
         <Grid item key={thing.id}>
