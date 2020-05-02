@@ -4,7 +4,7 @@ import { useQuery, QueryHookOptions } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import GridLoader, { ThingsQueryData } from './GridLoader';
 import { Cursor } from '../../services/apollo/types';
-import { Select, MenuItem, Checkbox } from '@material-ui/core';
+import { Select, MenuItem, Checkbox, FormControl, FormControlLabel } from '@material-ui/core';
 import { timeString } from '../util/utils';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -79,7 +79,7 @@ export default function (props: GridProps): JSX.Element {
             >
                 {sorts.map((sortValue)=><MenuItem key={sortValue} value={sortValue}>{sortValue}</MenuItem>)}
             </Select>
-            <Checkbox name='Only featured' onChange={checkBoxFeaturedHandler}/>
+            <FormControlLabel label='Only featured' labelPlacement="start" control={<Checkbox name='Only featured' onChange={checkBoxFeaturedHandler}/>} />
             <GridLoader
                 userId={props.userId}
                 query={THINGS_QUERY}
